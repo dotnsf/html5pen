@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8"/>
+<title>HTML5 Canvas Draw sample</title>
+<script type="text/javascript" src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+
+<style type="text/css">
+html, body{
+  text-align: center;
+  background-color: #fafafa;
+  font-size: 20px;
+  color: #333;
+}
+#mycanvas{
+  border: 1px solid #333;
+}
+</style>
+</head>
+<body>
+<canvas width="400" height="300" id="mycanvas">
+</canvas>
+
+<br/>
+<input type="button" value="reset" onClick="resetCanvas();"/>
+<input type="button" value="check" onClick="check();"/>
+
+<script>
+//. 参考: https://gist.github.com/Cartman0/436459b9b85cfdd1ca9c
+$(function(){
+  var canvas = document.getElementById( 'mycanvas' );
+  if( !canvas || !canvas.getContext ){
+    return false;
+  }
+  var ctx = canvas.getContext( '2d' );
+  //. マウスの座標を取得
+  var mouse = {
+    startX: 0,
+    startY: 0,
+    x: 0,
+    y: 0,
+    color: "black",
+    isDrawing: false
+  };
+  var borderWidth = 1;
+  canvas.addEventListener( "mousemove", function( e ){
+    //. マウスが動いたら座標値を取得
+    var rect = e.target.getBoundingClientRect();
+    mouse.x = e.clientX - rect.left - borderWidth;
+    mouse.y = e.clientY - rect.top - borderWidth;
+
+    //. isDrawがtrueのとき描画
+    if( mouse.isDrawing ){
+      ctx.beginPath();
+      ctx.lineWidth = 5;
+      ctx.moveTo( mouse.startX, mouse.startY );
+      ctx.lineTo( mouse.x, mouse.y );
+      ctx.strokeStyle = mouse.color;
+      ctx.stroke();
+      mouse.startX = mouse.x;
+      mouse.startY = mouse.y;
+    }
+  });
+  //. マウスを押したら、描画OK(myDrawをtrue)
+  canvas.addEventListener( "mousedown", function( e ){
+    mouse.isDrawing = true;
+    mouse.startX = mouse.x;
+    mouse.startY = mouse.y;
+  });
+  //. マウスを上げたら、描画禁止(myDrawをfalse)
+  canvas.addEventListener( "mouseup", function( e ){
+    mouse.isDrawing = false;
+  });
+  canvas.addEventListener( 'mouseleave', function( e ){
+    mouse.isDrawing = false;
+  });
+
+  canvas.addEventListener( "touchmove", function( e ){
+    //. タッチが動いたら座標値を取得
+    var t = e.changedTouches[0];
+    var rect = e.target.getBoundingClientRect();
+    mouse.x = e.pageX - rect.left - borderWidth;
+    mouse.y = e.pageY - rect.top - borderWidth;
+
+    //. isDrawがtrueのとき描画
+    if( mouse.isDrawing ){
+      ctx.beginPath();
+      ctx.lineWidth = 5;
+      ctx.moveTo( mouse.startX, mouse.startY );
+      ctx.lineTo( mouse.x, mouse.y );
+      ctx.strokeStyle = mouse.color;
+      ctx.stroke();
+      mouse.startX = mouse.x;
+      mouse.startY = mouse.y;
+    }
+  });
+  //. タッチしたら、描画OK(myDrawをtrue)
+  canvas.addEventListener( "touchstart", function( e ){
+    var t = e.changedTouches[0];
+    mouse.isDrawing = true;
+    mouse.startX = t.pageX;
+    mouse.startY = t.pageY;
+  });
+  //. タッチを上げたら、描画禁止(myDrawをfalse)
+  canvas.addEventListener( "touchend", function( e ){
+    mouse.isDrawing = false;
+  });
+  canvas.addEventListener( 'mouseleave', function( e ){
+    mouse.isDrawing = false;
+  });
+
+  //. スクロール禁止
+  $(window).on('touchmove.noScroll', function( e ){
+    e.preventDefault();
+  });
+
+  resetCanvas();
+});
+
+function resetCanvas(){
+  var canvas = document.getElementById( 'mycanvas' );
+  if( !canvas || !canvas.getContext ){
+    return false;
+  }
+  var ctx = canvas.getContext( '2d' );
+
+  //. 全体を白でベタ塗り
+  ctx.beginPath();
+  ctx.fillStyle = "rgb( 255, 255, 255 )";
+  ctx.fillRect( 0, 0, 400, 300 );
+  ctx.stroke();
+}
+
+function check(){
+  var canvas = document.getElementById( 'mycanvas' );
+  if( !canvas || !canvas.getContext ){
+    return false;
+  }
+  var ctx = canvas.getContext( '2d' );
+
+  //. 画像データ
+  var png = canvas.toDataURL( 'image/png' );
+  png = png.replace( /^.*,/, '' );
+
+  //. バイナリ変換
+  var bin = atob( png );
+  var buffer = new Uint8Array( bin.length );
+  for( var i = 0; i < bin.length; i ++ ){
+    buffer[i] = bin.charCodeAt( i );
+  }
+  var blob = new Blob( [buffer.buffer], {
+    type: 'image/png'
+  });
+
+  //. フォームにして送信
+  console.log( 'Sending data... : ' + blob.size );
+  /*
+  var formData = new FormData();
+  formData.append( 'image', blob );    //. <form enctype='multipart/formdata'><input name='image' type='file'/> ...
+  //formData.append( 'aaa', 'bbb' );
+  $.ajax({
+    type: 'POST',
+    url: '/send',
+    data: formData,
+    contentType: false,
+    processData: false,
+    success: function( data, dataType ){
+      console.log( data );
+    },
+    error: function( jqXHR, textStatus, errorThrown ){
+      console.log( textStatus + ': ' + errorThrown );
+    }
+  });
+  */
+}
+</script>
+</body>
+</html>
