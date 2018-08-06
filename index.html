@@ -46,7 +46,7 @@ html, body{
 </select>
 
 <div id="canvas_div">
-  <canvas width="400" height="300" id="mycanvas">
+  <canvas width="80%" height="50%" id="mycanvas">
   </canvas>
 
   <br/>
@@ -147,6 +147,11 @@ $(function(){
     $('#select_linewidth').css( { 'color': color } );
   });
 
+  //. リサイズ時に Canvas サイズを変更する
+  $(window).on( 'load resize', function(){
+    resized();
+  });
+
   //. スクロール禁止
   $(window).on('touchmove.noScroll', function( e ){
     e.preventDefault();
@@ -154,6 +159,16 @@ $(function(){
 
   resetCanvas();
 });
+
+function resized(){
+  var browserWidth = window.innerWidth;
+  var browserHeight = window.innerHeight;
+  var canvas = document.getElementById( 'mycanvas' );
+  if( canvas && canvas.getContext ){
+    canvas.width = browserWidth * 0.8;
+    canvas.height = browserHeight * 0.8;
+  }
+}
 
 function resetCanvas(){
   var canvas = document.getElementById( 'mycanvas' );
@@ -165,7 +180,7 @@ function resetCanvas(){
   //. 全体を白でベタ塗り
   ctx.beginPath();
   ctx.fillStyle = "rgb( 255, 255, 255 )";
-  ctx.fillRect( 0, 0, 400, 300 );
+  ctx.fillRect( 0, 0, canvas.width, canvas.height );
   ctx.stroke();
 }
 
@@ -195,7 +210,7 @@ function check(){
   /*
   var formData = new FormData();
   formData.append( 'image', blob );    //. <form enctype='multipart/formdata'><input name='image' type='file'/> ...
-  //formData.append( 'aaa', 'bbb' );
+  formData.append( 'timestamp', ( new Date() ).getTime() );
   $.ajax({
     type: 'POST',
     url: '/send',
