@@ -30,6 +30,9 @@ html, body{
   <option style="color:cyan;" value="cyan">空</option>
   <option style="color:magenta;" value="magenta">紫</option>
   <option style="color:gray;" value="gray">灰</option>
+  <option style="color:#ef8f9c;" value="#ef8f9c">ピンク</option>
+  <option style="color:#ead2ad;" value="#ead2ad">肌</option>
+  <option style="color:#7c6035;" value="#7c6035">茶</option>
 </select>
 
 <select id="select_linewidth" name="select_linewidth">
@@ -139,6 +142,11 @@ $(function(){
     //. タッチが動いたら座標値を取得
     var t = e.changedTouches[0];
     var rect = e.target.getBoundingClientRect();
+<<<<<<< HEAD
+=======
+    //mouse.x = e.pageX - rect.left - borderWidth;
+    //mouse.y = e.pageY - rect.top - borderWidth;
+>>>>>>> aac2f0ab4c9aa037959d5ba486fd63fbaf2f36eb
     mouse.x = ( isAndroid() ? t.pageX : e.pageX ) - rect.left - borderWidth;
     mouse.y = ( isAndroid() ? t.pageY : e.pageY ) - rect.top - borderWidth;
 
@@ -301,6 +309,7 @@ function check(){
   */
 }
 
+<<<<<<< HEAD
 function undo(){
   if( undos && undos.length > 0 ){
     var last_stroke = undos.pop();
@@ -349,6 +358,10 @@ function redrawCanvas(){
       }
     }
   }
+=======
+function isAndroid(){
+  return ( navigator.userAgent.indexOf( 'Android' ) > 0 );
+>>>>>>> aac2f0ab4c9aa037959d5ba486fd63fbaf2f36eb
 }
 </script>
 </body>
