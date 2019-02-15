@@ -50,22 +50,23 @@ html, body{
 
 <div id="canvas_div">
   <div id="cdiv"></div>
-  <!--
-  <canvas width="80%" height="50%" id="mycanvas">
-  </canvas>
-  -->
 
   <br/>
   <input type="button" class="btn btn-xs" id="undo_btn" style="display:none;" value="<" onClick="undo();"/>
   <input type="button" value="reset" onClick="resetCanvas();"/>
   <input type="button" value="check" onClick="check();"/>
   <input type="button" class="btn btn-xs" id="redo_btn" style="display:none;" value=">" onClick="redo();"/>
+  
+  <br/>
+  <input type="button" class="btn btn-xs" id="setbg_btn" value="背景色" onClick="setBG();"/>
+  <input type="button" class="btn btn-xs" id="resetbg_btn" value="背景色リセット" onClick="resetBG();"/>
 </div>
 
 <script>
 var undos = [];
 var redos = [];
 var stroke = null; //. { color: color, width: width, xys: [] }
+var backgroundcolor = null;
 
 //. 参考: https://gist.github.com/Cartman0/436459b9b85cfdd1ca9c
 $(function(){
@@ -233,8 +234,6 @@ function init(){
     event.preventDefault();
   }
   window.addEventListener( 'touchmove', movefun, { passive: false } );
-
-  //resetCanvas();
 }
 
 function resized(){
@@ -245,30 +244,16 @@ function resized(){
     canvas.width = browserWidth * 0.8;
     canvas.height = browserHeight * 0.8;
   }
-
-  //resetCanvas();
 }
 
 function resetCanvas( no_reset_unredo ){
   init();
   resized();
-  /*
-  var canvas = document.getElementById( 'mycanvas' );
-  if( !canvas || !canvas.getContext ){
-    return false;
-  }
-  var ctx = canvas.getContext( '2d' );
-
-  //. 全体を白でベタ塗り
-  ctx.beginPath();
-  ctx.fillStyle = "rgb( 255, 255, 255 )";
-  ctx.fillRect( 0, 0, canvas.width, canvas.height );
-  ctx.stroke();
-  */
 
   if( !no_reset_unredo ){
     undos = [];
     redos = [];
+    backgroundcolor = null;
   }
 }
 
@@ -345,9 +330,37 @@ function redo(){
   }
 }
 
+function setBG(){
+  var color = $('#select_color').val();
+  if( color ){
+    backgroundcolor = color;
+    redrawCanvas();
+  }
+}
+
+function resetBG(){
+  backgroundcolor = null;
+  redrawCanvas();
+}
+
 function redrawCanvas(){
   if( undos && undos.length >= 0 ){
     resetCanvas( true );
+
+    if( backgroundcolor ){
+      var canvas = document.getElementById( 'mycanvas' );
+      if( !canvas || !canvas.getContext ){
+        return false;
+      }
+      var ctx = canvas.getContext( '2d' );
+
+      //. 全体をベタ塗り
+      ctx.beginPath();
+      ctx.fillStyle = backgroundcolor; //"rgb( 255, 255, 255 )";
+      ctx.fillRect( 0, 0, canvas.width, canvas.height );
+      ctx.stroke();
+    }
+    
     for( var i = 0; i < undos.length; i ++ ){
       var stroke = undos[i];
 
