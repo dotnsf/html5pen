@@ -49,8 +49,11 @@ html, body{
 </select>
 
 <div id="canvas_div">
+  <div id="cdiv"></div>
+  <!--
   <canvas width="80%" height="50%" id="mycanvas">
   </canvas>
+  -->
 
   <br/>
   <input type="button" class="btn btn-xs" id="undo_btn" style="display:none;" value="<" onClick="undo();"/>
@@ -66,6 +69,12 @@ var stroke = null; //. { color: color, width: width, xys: [] }
 
 //. 参考: https://gist.github.com/Cartman0/436459b9b85cfdd1ca9c
 $(function(){
+  init();
+});
+
+function init(){
+  $('#cdiv').html( '<canvas width="80%" height="50%" id="mycanvas"></canvas>' );
+
   var canvas = document.getElementById( 'mycanvas' );
   if( !canvas || !canvas.getContext ){
     return false;
@@ -142,11 +151,8 @@ $(function(){
     //. タッチが動いたら座標値を取得
     var t = e.changedTouches[0];
     var rect = e.target.getBoundingClientRect();
-<<<<<<< HEAD
-=======
     //mouse.x = e.pageX - rect.left - borderWidth;
     //mouse.y = e.pageY - rect.top - borderWidth;
->>>>>>> aac2f0ab4c9aa037959d5ba486fd63fbaf2f36eb
     mouse.x = ( isAndroid() ? t.pageX : e.pageX ) - rect.left - borderWidth;
     mouse.y = ( isAndroid() ? t.pageY : e.pageY ) - rect.top - borderWidth;
 
@@ -228,8 +234,8 @@ $(function(){
   }
   window.addEventListener( 'touchmove', movefun, { passive: false } );
 
-  resetCanvas();
-});
+  //resetCanvas();
+}
 
 function resized(){
   var browserWidth = window.innerWidth;
@@ -244,6 +250,9 @@ function resized(){
 }
 
 function resetCanvas( no_reset_unredo ){
+  init();
+  resized();
+  /*
   var canvas = document.getElementById( 'mycanvas' );
   if( !canvas || !canvas.getContext ){
     return false;
@@ -255,6 +264,7 @@ function resetCanvas( no_reset_unredo ){
   ctx.fillStyle = "rgb( 255, 255, 255 )";
   ctx.fillRect( 0, 0, canvas.width, canvas.height );
   ctx.stroke();
+  */
 
   if( !no_reset_unredo ){
     undos = [];
@@ -309,7 +319,6 @@ function check(){
   */
 }
 
-<<<<<<< HEAD
 function undo(){
   if( undos && undos.length > 0 ){
     var last_stroke = undos.pop();
@@ -358,10 +367,6 @@ function redrawCanvas(){
       }
     }
   }
-=======
-function isAndroid(){
-  return ( navigator.userAgent.indexOf( 'Android' ) > 0 );
->>>>>>> aac2f0ab4c9aa037959d5ba486fd63fbaf2f36eb
 }
 </script>
 </body>
